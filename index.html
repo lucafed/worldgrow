@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Worldgrow</title>
+
+  <meta name="theme-color" content="#0f1f1c" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+<main class="app">
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="title">
+      <span class="dot"></span>
+      <div>
+        <h1>Il tuo Mondo</h1>
+        <p id="statusText">Nuovo compito: fai 2 foto (inizio + fine).</p>
+      </div>
+    </div>
+
+    <div class="counters">
+      <div class="counter">
+        ⚡ <span id="energy">0</span>
+      </div>
+      <div class="counter">
+        🌍 <span id="world">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SCENA -->
+  <section class="sceneWrap">
+    <div class="scene" id="scene">
+      <img
+        id="sceneImg"
+        src="./assets/scene_def_v1.png"
+        alt="Mondo"
+        class="sceneImg"
+      />
+
+      <div class="flash" id="flash"></div>
+      <div class="pop" id="pop"></div>
+    </div>
+  </section>
+
+  <!-- CONTROLLI -->
+  <section class="controls">
+    <button class="btn primary" id="btnSnap">📸 Foto compito</button>
+    <button class="btn" id="btnReset">Nuovo compito</button>
+
+    <p class="hint">
+      Regola MVP: <b>2 foto = compito finito</b> → il mondo cresce.
+    </p>
+  </section>
+
+  <!-- INPUT CAMERA -->
+  <input
+    id="camera"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    hidden
+  />
+
+</main>
+
+<script src="./app.js"></script>
+</body>
+</html>
