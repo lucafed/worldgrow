@@ -23,18 +23,15 @@
     </div>
 
     <div class="counters">
-      <div class="counter">
-        ⚡ <span id="energy">0</span>
-      </div>
-      <div class="counter">
-        🌍 <span id="world">0</span>
-      </div>
+      <div class="counter">⚡ <span id="energy">0</span></div>
+      <div class="counter">🌍 <span id="world">0</span></div>
     </div>
   </header>
 
   <!-- SCENA -->
   <section class="sceneWrap">
     <div class="scene" id="scene">
+      <!-- base scene -->
       <img
         id="sceneImg"
         src="./assets/scene_def_v1.png"
@@ -42,6 +39,22 @@
         class="sceneImg"
       />
 
+      <!-- LAYERS: porta + lucciole + personaggi -->
+      <div class="layer doorGlow" id="doorGlow" aria-hidden="true"></div>
+      <div class="layer fireflies" id="fireflies" aria-hidden="true"></div>
+
+      <!-- Personaggio (se hai PNG pittorico, mettilo in assets/char_guardiano.png) -->
+      <img
+        id="char1Img"
+        src="./assets/char_guardiano.png"
+        alt=""
+        class="character hidden"
+        onerror="this.classList.add('hidden'); document.getElementById('char1Fallback').classList.remove('hidden');"
+      />
+      <!-- fallback (se non c'è il PNG) -->
+      <div id="char1Fallback" class="character fallback hidden" aria-hidden="true">👾</div>
+
+      <!-- overlay / feedback -->
       <div class="flash" id="flash"></div>
       <div class="pop" id="pop"></div>
     </div>
@@ -58,13 +71,7 @@
   </section>
 
   <!-- INPUT CAMERA -->
-  <input
-    id="camera"
-    type="file"
-    accept="image/*"
-    capture="environment"
-    hidden
-  />
+  <input id="camera" type="file" accept="image/*" capture="environment" hidden />
 
 </main>
 
