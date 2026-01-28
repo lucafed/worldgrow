@@ -47,7 +47,6 @@ body{
   box-shadow: 0 18px 40px rgba(0,0,0,.35);
 }
 
-/* STAGE più alto e con “safe area” sotto: così i personaggi non vengono tagliati */
 .stage{
   position:relative;
   width:100%;
@@ -58,7 +57,6 @@ body{
   border: 1px solid rgba(255,255,255,.06);
 }
 
-/* Scena reale */
 .sceneImg{
   position:absolute; inset:0;
   width:100%; height:100%;
@@ -86,11 +84,11 @@ body{
 /* effetti evento */
 .portal{
   position:absolute;
-  left:65%;
-  top:52%;
-  width:32%;
-  height:32%;
-  transform: translate(-50%,-50%) scale(.92);
+  left:66%;
+  top:54%;
+  width:30%;
+  height:30%;
+  transform: translate(-50%,-50%) scale(.9);
   border-radius: 999px;
   background: radial-gradient(circle at 35% 35%, rgba(200,240,255,.55), rgba(80,180,255,.30) 45%, rgba(90,120,255,.18) 70%, transparent 72%);
   box-shadow: 0 0 26px rgba(120,190,255,.18);
@@ -101,8 +99,8 @@ body{
   animation: portalSpin .9s ease-in-out infinite;
 }
 @keyframes portalSpin{
-  0%,100%{transform:translate(-50%,-50%) scale(.92) rotate(0deg)}
-  50%{transform:translate(-50%,-50%) scale(1) rotate(10deg)}
+  0%,100%{transform:translate(-50%,-50%) scale(.9) rotate(0deg)}
+  50%{transform:translate(-50%,-50%) scale(1.02) rotate(12deg)}
 }
 
 .growthThing{
@@ -151,44 +149,52 @@ body{
 }
 .stage.pop .pop{opacity:1}
 
-/* ===== PERSONAGGI: GRANDI + CON GAMBE/PIEDI ===== */
+/* ===== PERSONAGGI: PIÙ PICCOLI + PIÙ STRANI ===== */
 .char{
   position:absolute;
-  width: clamp(180px, 52vw, 260px);
-  height: auto;
-  bottom: 6%;
+  width: clamp(140px, 40vw, 200px);  /* <<< più piccolo */
+  height:auto;
+  bottom: 7%;
   pointer-events:none;
   filter: drop-shadow(0 16px 18px rgba(0,0,0,.30));
 }
 
-/* posizioni: NON top%, ma bottom così non vengono tagliati */
-.gobo{ left: 6%; }
-.floof{ right: 2%; bottom: 4%; width: clamp(190px, 56vw, 280px); }
+/* posizioni: più dentro la scena */
+.gobo{ left: 10%; bottom: 8%; transform-origin:50% 92%; }
+.floof{ right: 6%; bottom: 7%; width: clamp(150px, 42vw, 210px); transform-origin:50% 92%; }
 
-@keyframes idleBob{
-  0%,100%{transform:translateY(0) rotate(-.4deg)}
-  50%{transform:translateY(-10px) rotate(.6deg)}
+/* idle più “sgangherato” */
+@keyframes wonkyIdle{
+  0%,100%{transform:translateY(0) rotate(-1.2deg) skewX(-.6deg)}
+  35%{transform:translateY(-8px) rotate(.9deg) skewX(.8deg)}
+  70%{transform:translateY(-3px) rotate(-.6deg) skewX(-.5deg)}
 }
-@keyframes excited{
+@keyframes nervous{
   0%,100%{transform:translateY(0) rotate(0deg)}
-  30%{transform:translateY(-16px) rotate(-4deg)}
-  60%{transform:translateY(-6px) rotate(3deg)}
+  20%{transform:translateY(-10px) rotate(-4deg)}
+  40%{transform:translateY(-6px) rotate(3deg)}
+  60%{transform:translateY(-10px) rotate(-2deg)}
+  80%{transform:translateY(-4px) rotate(2deg)}
 }
-.gobo, .floof{ animation: idleBob 2.8s ease-in-out infinite; transform-origin:50% 90% }
+.gobo, .floof{ animation: wonkyIdle 2.6s ease-in-out infinite; }
 
+/* Foto1: “sta per succedere qualcosa” */
 .stage.armed .gobo,
 .stage.armed .floof{
-  animation-duration: 1.6s;
+  animation: nervous 1.2s ease-in-out infinite;
 }
 
+/* Foto2: “azione” */
 .stage.event .gobo,
 .stage.event .floof{
-  animation: excited .85s ease-in-out 1;
+  animation: nervous .7s ease-in-out 1;
 }
 
-/* colori svg */
+/* ===== Stile SVG (più strano) ===== */
 .sh{ fill: rgba(0,0,0,.38); filter: blur(1px); opacity:.55 }
-.body{ fill:#4e8b5e; stroke: rgba(255,255,255,.18); stroke-width:3 }
+
+/* goblin: colori + linee */
+.body{ fill:#3f8f63; stroke: rgba(255,255,255,.18); stroke-width:3 }
 .belly{ fill: rgba(230,255,245,.22) }
 .ear{ fill:#57a96b; stroke: rgba(255,255,255,.14); stroke-width:3 }
 .eyeW{ fill:#eaffff }
@@ -196,10 +202,10 @@ body{
 .lid{ stroke: rgba(0,0,0,.18); stroke-width:6; fill:none; stroke-linecap:round; opacity:.7 }
 .mouth{ stroke: rgba(0,0,0,.30); stroke-width:8; fill:none; stroke-linecap:round }
 .tooth{ fill:#f6fbff; opacity:.9 }
-
 .leg{ stroke:#2c5c3a; stroke-width:10; stroke-linecap:round; fill:none; opacity:.95 }
 .foot{ fill:#2c5c3a; opacity:.95 }
 
+/* coniglio: più “nuvola strana” */
 .flBody{ fill:#f4fbff; stroke: rgba(0,0,0,.08); stroke-width:3 }
 .flEar{ fill:#ffffff; stroke: rgba(0,0,0,.08); stroke-width:3 }
 .flLeg{ stroke:#e3eff7; stroke-width:10; stroke-linecap:round; fill:none }
@@ -208,13 +214,20 @@ body{
 .blush{ fill: rgba(255,120,160,.22) }
 .flMouth{ stroke: rgba(0,0,0,.25); stroke-width:8; fill:none; stroke-linecap:round }
 
-/* blink */
-.gobo .eyes{ transform-origin:110px 95px }
-.stage .gobo .eyes{ animation: blink 6.8s infinite }
+/* blink + occhi che “ballano” */
+.gobo .eyes{ transform-origin:110px 95px; animation: blink 5.8s infinite; }
 @keyframes blink{
-  0%,92%,100%{transform:scaleY(1)}
-  94%{transform:scaleY(.12)}
-  96%{transform:scaleY(1)}
+  0%,90%,100%{transform:scaleY(1)}
+  92%{transform:scaleY(.10)}
+  94%{transform:scaleY(1)}
+}
+.gobo .pupil{
+  animation: pupilWander 3.6s ease-in-out infinite;
+}
+@keyframes pupilWander{
+  0%,100%{transform:translate(0,0)}
+  30%{transform:translate(6px,-2px)}
+  60%{transform:translate(-4px,3px)}
 }
 
 /* Controls */
