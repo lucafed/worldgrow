@@ -4,112 +4,129 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Worldgrow — Il tuo Mondo</title>
-  <link rel="stylesheet" href="./style.css" />
-  <meta name="theme-color" content="#0f2321">
+  <link rel="stylesheet" href="./style.css?v=1.0" />
 </head>
 
 <body>
-  <main class="wrap">
+  <div class="wrap">
     <header class="top">
-      <div class="title">
-        <div class="dot"></div>
-        <div>
-          <div class="h1">Il tuo Mondo</div>
-          <div class="sub" id="hint">Nuovo compito: fai 2 foto (inizio + fine).</div>
+      <div>
+        <div class="title">
+          <div class="dot"></div>
+          <div class="h1">Il tuo<br/>Mondo</div>
         </div>
+        <div class="sub" id="subtitle">Nuovo compito: fai 2 foto (inizio + fine).</div>
       </div>
 
       <div class="counters">
-        <div class="pill" title="Energia"><span class="ico">⚡</span><span id="energy">0</span></div>
-        <div class="pill" title="Crescita mondo"><span class="ico">🌍</span><span id="growth">0</span></div>
+        <div class="pill"><span class="ico">⚡</span><span id="energy">0</span></div>
+        <div class="pill"><span class="ico">🌍</span><span id="world">0</span></div>
       </div>
     </header>
 
     <section class="card">
-      <div class="stage" id="stage">
+      <!-- STAGE: idle / armed / event -->
+      <div class="stage idle" id="stage" aria-label="Scena">
+        <img class="sceneImg" id="sceneImg" src="./assets/scene_def_v1.png" alt="Scena" />
 
-        <!-- SCENA REALE (porta inclusa nell'immagine) -->
-        <img class="sceneImg" src="./assets/scene.png" alt="Scena" />
+        <div class="fireflies"></div>
 
-        <!-- Lucine -->
-        <div class="fireflies" aria-hidden="true"></div>
+        <!-- overlay evento -->
+        <div class="portal" id="portal"></div>
+        <div class="growthThing" id="growthThing"></div>
+        <div class="flash" id="flash"></div>
+        <div class="pop" id="pop"></div>
 
-        <!-- Effetti evento -->
-        <div class="portal" id="portal" aria-hidden="true"></div>
-        <div class="growthThing" id="growthThing" aria-hidden="true"></div>
+        <!-- PERSONAGGI (SVG) -->
+        <!-- GOBLIN STRAMBO -->
+        <svg class="char gobo" id="gobo" viewBox="0 0 260 260" aria-label="Gobo">
+          <!-- shadow -->
+          <ellipse class="sh" cx="130" cy="232" rx="64" ry="16"></ellipse>
 
-        <!-- PERSONAGGI GRANDI (SVG) -->
-        <!-- 1) GOBLINETTO SGANGHERATO -->
-        <svg class="char gobo" id="gobo" viewBox="0 0 220 220" aria-hidden="true">
-          <!-- ombra -->
-          <ellipse class="sh" cx="110" cy="198" rx="58" ry="14"/>
-          <!-- gambe -->
-          <path class="leg" d="M85 150 C80 175, 80 185, 78 198"/>
-          <path class="leg" d="M132 150 C140 175, 140 185, 144 198"/>
-          <!-- piedi -->
-          <path class="foot" d="M60 198 C70 190, 92 190, 102 198 C92 206, 72 206, 60 198Z"/>
-          <path class="foot" d="M120 198 C132 190, 158 190, 172 198 C158 206, 134 206, 120 198Z"/>
-          <!-- corpo -->
-          <path class="body" d="M62 92 C62 60, 86 46, 110 46 C134 46, 158 60, 158 92
-                               C158 124, 144 156, 110 156 C76 156, 62 124, 62 92Z"/>
-          <!-- pancia -->
-          <ellipse class="belly" cx="112" cy="118" rx="38" ry="28"/>
-          <!-- orecchie -->
-          <path class="ear" d="M58 78 C34 76, 28 58, 44 52 C58 46, 66 60, 58 78Z"/>
-          <path class="ear" d="M162 78 C186 76, 192 58, 176 52 C162 46, 154 60, 162 78Z"/>
-          <!-- occhi -->
-          <g class="eyes">
-            <ellipse class="eyeW" cx="92" cy="92" rx="18" ry="16"/>
-            <ellipse class="eyeW" cx="132" cy="92" rx="18" ry="16"/>
-            <circle class="pupil" cx="98" cy="98" r="6"/>
-            <circle class="pupil" cx="128" cy="98" r="6"/>
-            <path class="lid" d="M74 92 C86 80, 98 80, 110 92" />
-            <path class="lid" d="M114 92 C126 80, 138 80, 150 92" />
+          <!-- legs -->
+          <path class="leg" d="M95 185 L82 230" />
+          <path class="leg" d="M150 185 L168 230" />
+          <path class="foot" d="M70 230 C85 244, 105 244, 118 234 C103 230, 89 226, 70 230 Z"/>
+          <path class="foot" d="M155 234 C170 246, 195 244, 210 232 C190 226, 176 228, 155 234 Z"/>
+
+          <!-- body -->
+          <path class="body" d="M65 95 C55 165, 85 205, 130 205 C180 205, 206 160, 195 98
+                               C188 58, 160 40, 130 44 C102 48, 72 56, 65 95 Z"/>
+          <path class="belly" d="M95 120 C92 158, 110 186, 132 186 C158 186, 170 156, 167 120
+                                 C162 98, 142 92, 130 92 C114 92, 98 100, 95 120 Z"/>
+
+          <!-- ears (una più lunga e storta) -->
+          <path class="ear" d="M70 92 C35 80, 30 50, 55 45 C78 40, 88 64, 82 86 Z"/>
+          <path class="ear" d="M190 92 C230 78, 238 55, 220 44 C200 32, 178 56, 182 84 Z"/>
+
+          <!-- arms (una lunga “molla”) -->
+          <path class="leg" id="goboArmL" d="M78 140 C45 150, 40 170, 62 178" />
+          <path class="leg" id="goboArmR" d="M182 140 C214 150, 224 170, 204 184" />
+
+          <!-- face -->
+          <g class="eyes" id="goboEyes">
+            <ellipse class="eyeW" cx="110" cy="110" rx="28" ry="24"></ellipse>
+            <ellipse class="eyeW" cx="156" cy="110" rx="30" ry="24"></ellipse>
+
+            <circle class="pupil" id="goboP1" cx="118" cy="114" r="8"></circle>
+            <circle class="pupil" id="goboP2" cx="146" cy="114" r="8"></circle>
+
+            <path class="lid" d="M88 103 Q110 88 132 103" />
+            <path class="lid" d="M132 103 Q156 88 180 103" />
           </g>
-          <!-- bocca -->
-          <path class="mouth" d="M92 122 C108 136, 122 136, 138 122"/>
-          <path class="tooth" d="M103 128 L108 138 L112 128Z"/>
+
+          <path class="mouth" d="M105 150 Q132 168 165 146" />
+          <path class="tooth" d="M118 156 L128 170 L136 154 Z"/>
+          <circle cx="172" cy="130" r="6" fill="rgba(0,0,0,.18)"></circle>
         </svg>
 
-        <!-- 2) CONIGLIO-NUVOLA STRAMBO -->
-        <svg class="char floof" id="floof" viewBox="0 0 240 240" aria-hidden="true">
-          <ellipse class="sh" cx="120" cy="212" rx="62" ry="14"/>
-          <!-- orecchie -->
-          <path class="flEar" d="M70 78 C52 40, 70 28, 84 50 C92 64, 86 84, 70 78Z"/>
-          <path class="flEar" d="M170 78 C188 40, 170 28, 156 50 C148 64, 154 84, 170 78Z"/>
-          <!-- corpo soffice -->
-          <path class="flBody" d="M56 120 C56 86, 84 70, 120 70 C156 70, 184 86, 184 120
-                                C184 154, 160 196, 120 196 C80 196, 56 154, 56 120Z"/>
-          <!-- gambette -->
-          <path class="flLeg" d="M92 182 C92 198, 86 206, 80 212"/>
-          <path class="flLeg" d="M148 182 C148 198, 154 206, 160 212"/>
-          <path class="flFoot" d="M62 212 C72 206, 92 206, 104 212 C92 218, 74 218, 62 212Z"/>
-          <path class="flFoot" d="M136 212 C148 206, 168 206, 178 212 C168 218, 148 218, 136 212Z"/>
-          <!-- faccia -->
-          <circle class="blush" cx="90" cy="130" r="10"/>
-          <circle class="blush" cx="150" cy="130" r="10"/>
-          <circle class="flEye" cx="100" cy="120" r="8"/>
-          <circle class="flEye" cx="140" cy="120" r="8"/>
-          <path class="flMouth" d="M112 140 C120 148, 128 148, 136 140"/>
+        <!-- BUNNY NUVOLA STRANA -->
+        <svg class="char floof" id="floof" viewBox="0 0 280 280" aria-label="Floof">
+          <ellipse class="sh" cx="150" cy="240" rx="68" ry="16"></ellipse>
+
+          <!-- ears (una piegata) -->
+          <path class="flEar" d="M92 80 C78 40, 104 18, 126 34 C150 52, 130 82, 112 94 Z"/>
+          <path class="flEar" d="M178 88 C164 44, 198 14, 224 40 C246 62, 224 98, 200 108 Z"/>
+
+          <!-- body (nuvola) -->
+          <path class="flBody"
+                d="M72 140
+                   C60 116, 76 92, 104 94
+                   C112 76, 132 62, 156 70
+                   C176 54, 210 62, 216 92
+                   C244 96, 256 120, 242 142
+                   C260 162, 246 192, 220 190
+                   C210 214, 180 226, 154 212
+                   C132 232, 92 226, 86 198
+                   C60 192, 48 164, 72 140 Z"/>
+
+          <!-- legs -->
+          <path class="flLeg" d="M112 206 L102 236" />
+          <path class="flLeg" d="M178 206 L188 236" />
+          <path class="flFoot" d="M88 236 C104 250, 126 250, 140 240 C120 234, 104 232, 88 236 Z"/>
+          <path class="flFoot" d="M150 240 C166 252, 196 250, 212 236 C190 232, 170 234, 150 240 Z"/>
+
+          <!-- face (occhi diversi: uno grande uno piccolo) -->
+          <circle class="flEye" id="flEyeBig" cx="122" cy="150" r="13"></circle>
+          <circle class="flEye" id="flEyeSmall" cx="172" cy="152" r="9"></circle>
+          <circle class="blush" cx="104" cy="168" r="14"></circle>
+          <circle class="blush" cx="194" cy="170" r="14"></circle>
+          <path class="flMouth" d="M126 178 Q148 192 170 176" />
         </svg>
 
-        <!-- overlay flash + pop -->
-        <div class="flash" id="flash" aria-hidden="true"></div>
-        <div class="pop" id="pop" aria-hidden="true"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn primary" id="btnSnap">📸 Foto compito</button>
+        <button class="btn" id="btnNew">Nuovo compito</button>
+        <button class="btn ghost" id="btnDemo">▶ Demo</button>
+        <div class="footTxt">Regola MVP: <b>2 foto = qualcosa cambia</b>.</div>
+
+        <input id="camera" type="file" accept="image/*" capture="environment" style="display:none" />
       </div>
     </section>
+  </div>
 
-    <section class="controls">
-      <button class="btn primary" id="btnSnap">📸 Foto compito</button>
-      <button class="btn" id="btnResetTask">Nuovo compito</button>
-      <button class="btn ghost" id="btnDemo">▶ Demo</button>
-
-      <div class="footTxt">Regola MVP: <b>2 foto = qualcosa cambia</b>.</div>
-
-      <input id="camera" type="file" accept="image/*" capture="environment" hidden />
-    </section>
-  </main>
-
-  <script src="./app.js"></script>
+  <script src="./app.js?v=1.0"></script>
 </body>
 </html>
