@@ -2,79 +2,39 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Worldgrow</title>
-
-  <meta name="theme-color" content="#0f1f1c" />
   <link rel="stylesheet" href="./style.css" />
 </head>
-
 <body>
-<main class="app">
-
-  <!-- HEADER -->
-  <header class="top">
-    <div class="title">
-      <span class="dot"></span>
-      <div>
-        <h1>Il tuo Mondo</h1>
-        <p id="statusText">Nuovo compito: fai 2 foto (inizio + fine).</p>
+  <main class="wrap">
+    <section class="card">
+      <div class="header">
+        <div class="dot"></div>
+        <div class="title">
+          <h1>Il tuo Mondo</h1>
+          <p id="msg">Nuovo compito: fai 2 foto (inizio + fine).</p>
+        </div>
+        <div class="stats">
+          <div class="badge" title="energia"><span id="energy">0</span></div>
+          <div class="badge" title="mondo"><span id="world">0</span></div>
+        </div>
       </div>
-    </div>
 
-    <div class="counters">
-      <div class="counter">⚡ <span id="energy">0</span></div>
-      <div class="counter">🌍 <span id="world">0</span></div>
-    </div>
-  </header>
+      <div class="sceneBox">
+        <div class="scene" id="scene"></div>
+      </div>
 
-  <!-- SCENA -->
-  <section class="sceneWrap">
-    <div class="scene" id="scene">
-      <!-- base scene -->
-      <img
-        id="sceneImg"
-        src="./assets/scene_def_v1.png"
-        alt="Mondo"
-        class="sceneImg"
-      />
+      <div class="controls">
+        <button class="btn primary" id="btnSnap">📸 Foto compito</button>
+        <button class="btn" id="btnResetTask">Nuovo compito</button>
+        <div class="hint">Regola MVP: <b>2 foto = compito finito</b> → il mondo cresce.</div>
+      </div>
 
-      <!-- LAYERS: porta + lucciole + personaggi -->
-      <div class="layer doorGlow" id="doorGlow" aria-hidden="true"></div>
-      <div class="layer fireflies" id="fireflies" aria-hidden="true"></div>
+      <input id="camera" type="file" accept="image/*" capture="environment" style="display:none" />
+    </section>
+  </main>
 
-      <!-- Personaggio (se hai PNG pittorico, mettilo in assets/char_guardiano.png) -->
-      <img
-        id="char1Img"
-        src="./assets/char_guardiano.png"
-        alt=""
-        class="character hidden"
-        onerror="this.classList.add('hidden'); document.getElementById('char1Fallback').classList.remove('hidden');"
-      />
-      <!-- fallback (se non c'è il PNG) -->
-      <div id="char1Fallback" class="character fallback hidden" aria-hidden="true">👾</div>
-
-      <!-- overlay / feedback -->
-      <div class="flash" id="flash"></div>
-      <div class="pop" id="pop"></div>
-    </div>
-  </section>
-
-  <!-- CONTROLLI -->
-  <section class="controls">
-    <button class="btn primary" id="btnSnap">📸 Foto compito</button>
-    <button class="btn" id="btnReset">Nuovo compito</button>
-
-    <p class="hint">
-      Regola MVP: <b>2 foto = compito finito</b> → il mondo cresce.
-    </p>
-  </section>
-
-  <!-- INPUT CAMERA -->
-  <input id="camera" type="file" accept="image/*" capture="environment" hidden />
-
-</main>
-
-<script src="./app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
