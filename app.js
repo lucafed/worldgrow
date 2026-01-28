@@ -1,63 +1,112 @@
-const stage = document.getElementById("stage");
-const energyEl = document.getElementById("energy");
-const worldEl = document.getElementById("world");
-const msg = document.getElementById("msg");
-const pop = document.getElementById("pop");
+(() => {
+  "use strict";
 
-const cam = document.getElementById("camera");
-const btnSnap = document.getElementById("btnSnap");
-const btnReset = document.getElementById("btnReset");
-const btnDemo = document.getElementById("btnDemo");
+  const $ = (id) => document.getElementById(id);
 
-let photos = 0;
-let energy = 0;
-let world = 0;
+  const stage = $("stage");
+  const hint = $("hint");
+  const pop = $("pop");
 
-function update(){
-  energyEl.textContent = energy;
-  worldEl.textContent = world;
-}
+  const btnSnap = $("btnSnap");
+  const btnReset = $("btnResetTask");
+  const btnDemo = $("btnDemo");
+  const camera = $("camera");
 
-function say(text){
-  pop.textContent = text;
-  pop.classList.add("show");
-  setTimeout(()=>pop.classList.remove("show"),1400);
-}
+  const energyEl = $("energy");
+  const growthEl = $("growth");
 
-btnSnap.onclick = ()=>cam.click();
+  let photoCount = 0;
+  let energy = 0;
+  let growth = 0;
 
-cam.onchange = ()=>{
-  if(!cam.files.length) return;
-  photos++;
-  energy+=2;
-
-  if(photos===1){
-    stage.classList.add("armed");
-    msg.textContent="Qualcosa si muove...";
-    say("Ti hanno visto.");
+  // helper: stato scena
+  function setState(cls, on) {
+    stage.classList.toggle(cls, !!on);
   }
-  if(photos===2){
-    photos=0;
-    world++;
-    stage.classList.remove("armed");
-    stage.classList.add("event");
-    msg.textContent="È successo qualcosa.";
-    say("La porta reagisce.");
-    setTimeout(()=>stage.classList.remove("event"),2000);
+
+  function say(text, ms = 1200) {
+    pop.textContent = text;
+    stage.classList.add("pop");
+    clearTimeout(say._t);
+    say._t = setTimeout(() => stage.classList.remove("pop"), ms);
   }
-  update();
-  cam.value="";
-};
 
-btnReset.onclick=()=>{
-  photos=0;
-  stage.classList.remove("armed","event");
-  msg.textContent="Nuovo compito.";
-};
+  function updateHUD() {
+    energyEl.textContent = String(energy);
+    growthEl.textContent = String(growth);
+  }
 
-btnDemo.onclick=()=>{
-  cam.onchange({files:[1]});
-  setTimeout(()=>cam.onchange({files:[1]}),800);
-};
+  function resetTask() {
+    photoCount = 0;
+    setState("armed", false);
+    setState("event", false);
+    hint.textContent = "Nuovo compito: fai 2 foto (inizio + fine).";
+    say("Nuovo compito! ⚡", 900);
+  }
 
-update();
+  function onPhotoTaken() {
+    photoCount++;
+
+    // “energia” cresce sempre
+    energy += 2;
+    updateHUD();
+
+    if (photoCount === 1) {
+      // Foto 1 → tensione
+      setState("armed", true);
+      setState("event", false);
+      hint.textContent = "Foto 1 presa. Ora finisci: la scena sta per cambiare…";
+      say("Ooh… sta per succedere 😳", 1200);
+      return;
+    }
+
+    if (photoCount >= 2) {
+      // Foto 2 → evento
+      setState("armed", false);
+      setState("event", true);
+
+      growth += 1;
+      updateHUD();
+
+      hint.textContent = "Compito FINITO. Il mondo cresce (e i personaggi reagiscono).";
+      say("BOOM! È apparso qualcosa ✨", 1400);
+
+      // dopo un po’ torna a idle (ma i personaggi restano vivi)
+      setTimeout(() => {
+        setState("event", false);
+        hint.textContent = "Nuovo compito: fai 2 foto (inizio + fine).";
+        photoCount = 0;
+      }, 1400);
+    }
+  }
+
+  // Foto compito: apri camera (ma se browser blocca, la Demo funziona sempre)
+  btnSnap.addEventListener("click", () => {
+    try {
+      camera.click();
+    } catch {
+      // fallback
+      onPhotoTaken();
+    }
+  });
+
+  camera.addEventListener("change", () => {
+    // non ci interessa leggere l’immagine ora: basta capire che “una foto è stata fatta”
+    onPhotoTaken();
+    camera.value = "";
+  });
+
+  btnReset.addEventListener("click", resetTask);
+
+  // DEMO: simula Foto1 poi Foto2 (cartone)
+  btnDemo.addEventListener("click", () => {
+    resetTask();
+    setTimeout(() => onPhotoTaken(), 180);
+    setTimeout(() => onPhotoTaken(), 1050);
+  });
+
+  // init
+  updateHUD();
+  resetTask();
+
+})();
