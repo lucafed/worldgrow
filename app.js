@@ -3,78 +3,94 @@
 
   const $ = (id) => document.getElementById(id);
 
+  const stage = $("stage");
   const elMsg = $("msg");
   const elEnergy = $("energy");
   const elWorld = $("world");
-  const elScene = $("scene");
+  const pop = $("pop");
+  const flash = $("flash");
+
   const inputCam = $("camera");
   const btnSnap = $("btnSnap");
   const btnReset = $("btnResetTask");
+  const btnDemo = $("btnDemo");
 
-  // --- Stato semplice (MVP) ---
-  const SKEY = "worldgrow_v1_state";
-  const state = loadState();
+  const SKEY = "worldgrow_story_v1";
 
-  // 4 scene nello sprite 2x2:
-  // 0 = alto-sinistra, 1 = alto-destra, 2 = basso-sinistra, 3 = basso-destra
-  function applyStage(stage) {
-    const map = [
-      "0% 0%",
-      "100% 0%",
-      "0% 100%",
-      "100% 100%"
-    ];
-    elScene.style.backgroundPosition = map[stage % 4];
-  }
-
-  function flashScene() {
-    elScene.classList.add("flash");
-    setTimeout(() => elScene.classList.remove("flash"), 260);
-  }
+  const state = loadState(); // {energy, world, photosInTask}
 
   function render() {
     elEnergy.textContent = String(state.energy);
     elWorld.textContent = String(state.world);
 
-    const stage = state.world % 4;
-    applyStage(stage);
+    stage.classList.remove("armed", "event");
 
     if (state.photosInTask === 0) {
-      elMsg.textContent = "Nuovo compito: fai 2 foto (inizio + fine).";
+      elMsg.textContent = "Apri l’app: gli abitanti aspettano. Poi fai 2 foto (inizio + fine).";
+      // idle
     } else if (state.photosInTask === 1) {
-      elMsg.textContent = "Foto 1 presa. Vai tranquillo, poi fai la foto finale.";
+      elMsg.textContent = "Foto 1 presa. Qualcosa si muove… finisci e fai la foto finale.";
+      stage.classList.add("armed");
     } else {
-      elMsg.textContent = "Compito finito! Il mondo cresce.";
+      elMsg.textContent = "Compito finito. È successo qualcosa.";
+      stage.classList.add("event");
     }
   }
 
-  // --- Logica foto: 2 foto = completato ---
+  function showPop(text) {
+    pop.textContent = text;
+    pop.classList.add("show");
+    setTimeout(() => pop.classList.remove("show"), 1400);
+  }
+
+  function doFlash() {
+    flash.classList.add("on");
+    setTimeout(() => flash.classList.remove("on"), 220);
+  }
+
+  // Sequenza evento “foto2”
+  function runEventSequence() {
+    stage.classList.add("event");
+    doFlash();
+    showPop("La porta ha sentito l’energia…");
+
+    // dopo un attimo: “portale”
+    setTimeout(() => showPop("Si apre un varco."), 900);
+
+    // dopo un po’: torna idle (ma mondo aumentato)
+    setTimeout(() => {
+      stage.classList.remove("event");
+      showPop("Ok. Si è calmato tutto… per ora.");
+    }, 2300);
+  }
+
   function onTakePhoto() {
     state.photosInTask += 1;
-
-    // energia: +2 per ogni foto (come prima)
     state.energy += 2;
 
+    if (state.photosInTask === 1) {
+      // “Sta per succedere”
+      stage.classList.add("armed");
+      doFlash();
+      showPop("Gli abitanti ti hanno visto.");
+    }
+
     if (state.photosInTask >= 2) {
-      // COMPLETATO: cresce
+      // COMPLETATO
       state.world += 1;
       state.photosInTask = 0;
 
-      // animazione crescita
-      flashScene();
-      // piccola attesa e poi cambia scena (fade)
-      setTimeout(() => {
-        applyStage(state.world % 4);
-      }, 180);
-
-      elMsg.textContent = "Bravo. Hai finito. Il mondo è cambiato.";
+      saveState();
+      render();
+      runEventSequence();
+      return;
     }
 
     saveState();
     render();
   }
 
-  // --- Camera input (MVP: basta “selezionare” la foto) ---
+  // camera input (MVP)
   inputCam.addEventListener("change", () => {
     if (inputCam.files && inputCam.files.length) onTakePhoto();
     inputCam.value = "";
@@ -85,7 +101,19 @@
   btnReset.addEventListener("click", () => {
     state.photosInTask = 0;
     saveState();
+    stage.classList.remove("armed", "event");
+    showPop("Nuovo compito. Tutti in attesa.");
     render();
+  });
+
+  btnDemo.addEventListener("click", () => {
+    // demo: simula foto1 + foto2 (senza usare la camera)
+    if (state.photosInTask !== 0) state.photosInTask = 0;
+    saveState();
+    render();
+
+    setTimeout(() => { onTakePhoto(); }, 150);
+    setTimeout(() => { onTakePhoto(); }, 900);
   });
 
   function loadState() {
