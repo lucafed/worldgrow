@@ -20,59 +20,80 @@
       </div>
 
       <div class="counters">
-        <div class="pill" title="Energia">
-          <span class="ico">⚡</span>
-          <span id="energy">0</span>
-        </div>
-        <div class="pill" title="Crescita mondo">
-          <span class="ico">🌍</span>
-          <span id="growth">0</span>
-        </div>
+        <div class="pill" title="Energia"><span class="ico">⚡</span><span id="energy">0</span></div>
+        <div class="pill" title="Crescita mondo"><span class="ico">🌍</span><span id="growth">0</span></div>
       </div>
     </header>
 
     <section class="card">
       <div class="stage" id="stage">
-        <!-- Sfondo (gradiente, niente immagini per ora: già “cartone”) -->
-        <div class="bg"></div>
+
+        <!-- SCENA REALE (porta inclusa nell'immagine) -->
+        <img class="sceneImg" src="./assets/scene.png" alt="Scena" />
+
+        <!-- Lucine -->
         <div class="fireflies" aria-hidden="true"></div>
 
-        <!-- PORTA misteriosa -->
-        <div class="door" id="door" aria-hidden="true">
-          <div class="doorGlow"></div>
-          <div class="doorWood"></div>
-          <div class="doorKnob"></div>
-        </div>
-
-        <!-- PORTALE (appare in evento) -->
+        <!-- Effetti evento -->
         <div class="portal" id="portal" aria-hidden="true"></div>
-
-        <!-- “COSA CHE CRESCE” (albero/oggetto) -->
         <div class="growthThing" id="growthThing" aria-hidden="true"></div>
 
-        <!-- PERSONAGGI: SEMPRE VISIBILI + ANIMATI -->
-        <div class="char geo" id="geo" aria-hidden="true">
-          <div class="shadow"></div>
-          <div class="body"></div>
-          <div class="moss"></div>
-          <div class="eyes">
-            <span class="eye"></span><span class="eye"></span>
-          </div>
-          <div class="mouth"></div>
-        </div>
+        <!-- PERSONAGGI GRANDI (SVG) -->
+        <!-- 1) GOBLINETTO SGANGHERATO -->
+        <svg class="char gobo" id="gobo" viewBox="0 0 220 220" aria-hidden="true">
+          <!-- ombra -->
+          <ellipse class="sh" cx="110" cy="198" rx="58" ry="14"/>
+          <!-- gambe -->
+          <path class="leg" d="M85 150 C80 175, 80 185, 78 198"/>
+          <path class="leg" d="M132 150 C140 175, 140 185, 144 198"/>
+          <!-- piedi -->
+          <path class="foot" d="M60 198 C70 190, 92 190, 102 198 C92 206, 72 206, 60 198Z"/>
+          <path class="foot" d="M120 198 C132 190, 158 190, 172 198 C158 206, 134 206, 120 198Z"/>
+          <!-- corpo -->
+          <path class="body" d="M62 92 C62 60, 86 46, 110 46 C134 46, 158 60, 158 92
+                               C158 124, 144 156, 110 156 C76 156, 62 124, 62 92Z"/>
+          <!-- pancia -->
+          <ellipse class="belly" cx="112" cy="118" rx="38" ry="28"/>
+          <!-- orecchie -->
+          <path class="ear" d="M58 78 C34 76, 28 58, 44 52 C58 46, 66 60, 58 78Z"/>
+          <path class="ear" d="M162 78 C186 76, 192 58, 176 52 C162 46, 154 60, 162 78Z"/>
+          <!-- occhi -->
+          <g class="eyes">
+            <ellipse class="eyeW" cx="92" cy="92" rx="18" ry="16"/>
+            <ellipse class="eyeW" cx="132" cy="92" rx="18" ry="16"/>
+            <circle class="pupil" cx="98" cy="98" r="6"/>
+            <circle class="pupil" cx="128" cy="98" r="6"/>
+            <path class="lid" d="M74 92 C86 80, 98 80, 110 92" />
+            <path class="lid" d="M114 92 C126 80, 138 80, 150 92" />
+          </g>
+          <!-- bocca -->
+          <path class="mouth" d="M92 122 C108 136, 122 136, 138 122"/>
+          <path class="tooth" d="M103 128 L108 138 L112 128Z"/>
+        </svg>
 
-        <div class="char scriba" id="scriba" aria-hidden="true">
-          <div class="shadow"></div>
-          <div class="body"></div>
-          <div class="head"></div>
-          <div class="mono"></div>
-          <div class="eye"></div>
-          <div class="beak"></div>
-          <div class="wing w1"></div>
-          <div class="wing w2"></div>
-        </div>
+        <!-- 2) CONIGLIO-NUVOLA STRAMBO -->
+        <svg class="char floof" id="floof" viewBox="0 0 240 240" aria-hidden="true">
+          <ellipse class="sh" cx="120" cy="212" rx="62" ry="14"/>
+          <!-- orecchie -->
+          <path class="flEar" d="M70 78 C52 40, 70 28, 84 50 C92 64, 86 84, 70 78Z"/>
+          <path class="flEar" d="M170 78 C188 40, 170 28, 156 50 C148 64, 154 84, 170 78Z"/>
+          <!-- corpo soffice -->
+          <path class="flBody" d="M56 120 C56 86, 84 70, 120 70 C156 70, 184 86, 184 120
+                                C184 154, 160 196, 120 196 C80 196, 56 154, 56 120Z"/>
+          <!-- gambette -->
+          <path class="flLeg" d="M92 182 C92 198, 86 206, 80 212"/>
+          <path class="flLeg" d="M148 182 C148 198, 154 206, 160 212"/>
+          <path class="flFoot" d="M62 212 C72 206, 92 206, 104 212 C92 218, 74 218, 62 212Z"/>
+          <path class="flFoot" d="M136 212 C148 206, 168 206, 178 212 C168 218, 148 218, 136 212Z"/>
+          <!-- faccia -->
+          <circle class="blush" cx="90" cy="130" r="10"/>
+          <circle class="blush" cx="150" cy="130" r="10"/>
+          <circle class="flEye" cx="100" cy="120" r="8"/>
+          <circle class="flEye" cx="140" cy="120" r="8"/>
+          <path class="flMouth" d="M112 140 C120 148, 128 148, 136 140"/>
+        </svg>
 
-        <!-- overlay flash + testo -->
+        <!-- overlay flash + pop -->
         <div class="flash" id="flash" aria-hidden="true"></div>
         <div class="pop" id="pop" aria-hidden="true"></div>
       </div>
@@ -83,9 +104,8 @@
       <button class="btn" id="btnResetTask">Nuovo compito</button>
       <button class="btn ghost" id="btnDemo">▶ Demo</button>
 
-      <div class="foot">Regola MVP: <b>2 foto = qualcosa cambia</b>.</div>
+      <div class="footTxt">Regola MVP: <b>2 foto = qualcosa cambia</b>.</div>
 
-      <!-- input camera -->
       <input id="camera" type="file" accept="image/*" capture="environment" hidden />
     </section>
   </main>
