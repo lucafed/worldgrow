@@ -1,126 +1,110 @@
-/* ---------------------------------
-   WORLDGROW — APP v2 (LIVE SCENE)
-   - personaggio vivo (idle/happy)
-   - porta glow al completamento
----------------------------------- */
+(() => {
+  "use strict";
 
-let photoCount = 0;
-let energy = 0;
-let world = 0;
+  const $ = (id) => document.getElementById(id);
 
-const btnSnap   = document.getElementById("btnSnap");
-const btnReset  = document.getElementById("btnReset");
-const cameraInp = document.getElementById("camera");
+  const elMsg = $("msg");
+  const elEnergy = $("energy");
+  const elWorld = $("world");
+  const elScene = $("scene");
+  const inputCam = $("camera");
+  const btnSnap = $("btnSnap");
+  const btnReset = $("btnResetTask");
 
-const statusText = document.getElementById("statusText");
-const energyEl   = document.getElementById("energy");
-const worldEl    = document.getElementById("world");
+  // --- Stato semplice (MVP) ---
+  const SKEY = "worldgrow_v1_state";
+  const state = loadState();
 
-const scene = document.getElementById("scene");
-const pop   = document.getElementById("pop");
-
-// mostra PNG se esiste, altrimenti fallback (gestito da onerror in HTML)
-const char1Img = document.getElementById("char1Img");
-const char1Fallback = document.getElementById("char1Fallback");
-
-function updateCounters(){
-  energyEl.textContent = energy;
-  worldEl.textContent  = world;
-}
-
-function setStatus(txt){
-  statusText.textContent = txt;
-}
-
-function setSceneMood(mode){
-  // mode: "idle" | "happy"
-  scene.classList.remove("idle","happy");
-  scene.classList.add(mode);
-}
-
-// “effetti scena” al completamento
-function playGrowScene(message){
-  if(pop) pop.textContent = message || "Qualcosa è cresciuto.";
-
-  // grow + pop + door glow
-  scene.classList.remove("grow","pop","door");
-  void scene.offsetWidth;
-  scene.classList.add("grow","pop","door");
-
-  setTimeout(()=>{
-    scene.classList.remove("grow","pop","door");
-  },1300);
-}
-
-function ensureCharacterVisible(){
-  // se l'immagine non è in errore, mostriamo PNG
-  // (onerror in HTML nasconde lui e mostra fallback)
-  if(char1Img && !char1Img.classList.contains("hidden")){
-    // ok
-  } else if(char1Fallback && !char1Fallback.classList.contains("hidden")){
-    // ok
-  } else {
-    // se nessuno è visibile, abilita fallback
-    if(char1Fallback) char1Fallback.classList.remove("hidden");
-  }
-}
-
-/* -------------------------------
-   FOTO
--------------------------------- */
-
-btnSnap.addEventListener("click", ()=>{
-  cameraInp.click();
-});
-
-cameraInp.addEventListener("change", ()=>{
-  if(!cameraInp.files || !cameraInp.files[0]) return;
-
-  photoCount++;
-  energy += 1;
-  updateCounters();
-
-  ensureCharacterVisible();
-
-  if(photoCount === 1){
-    setStatus("Foto 1 presa. Vai tranquillo, poi fai la foto finale.");
-    setSceneMood("idle");
+  // 4 scene nello sprite 2x2:
+  // 0 = alto-sinistra, 1 = alto-destra, 2 = basso-sinistra, 3 = basso-destra
+  function applyStage(stage) {
+    const map = [
+      "0% 0%",
+      "100% 0%",
+      "0% 100%",
+      "100% 100%"
+    ];
+    elScene.style.backgroundPosition = map[stage % 4];
   }
 
-  if(photoCount >= 2){
-    // COMPITO FINITO
-    world += 1;
-    updateCounters();
-
-    setStatus("Compito finito. Il mondo cambia.");
-    setSceneMood("happy");
-    playGrowScene("Qualcosa è cresciuto.");
-
-    // torna idle dopo un attimo
-    setTimeout(()=> setSceneMood("idle"), 2000);
-
-    // reset per prossimo compito
-    photoCount = 0;
-    cameraInp.value = "";
+  function flashScene() {
+    elScene.classList.add("flash");
+    setTimeout(() => elScene.classList.remove("flash"), 260);
   }
-});
 
-/* -------------------------------
-   RESET
--------------------------------- */
+  function render() {
+    elEnergy.textContent = String(state.energy);
+    elWorld.textContent = String(state.world);
 
-btnReset.addEventListener("click", ()=>{
-  photoCount = 0;
-  setStatus("Nuovo compito: fai 2 foto (inizio + fine).");
-  cameraInp.value = "";
-  setSceneMood("idle");
-});
+    const stage = state.world % 4;
+    applyStage(stage);
 
-/* -------------------------------
-   INIT
--------------------------------- */
+    if (state.photosInTask === 0) {
+      elMsg.textContent = "Nuovo compito: fai 2 foto (inizio + fine).";
+    } else if (state.photosInTask === 1) {
+      elMsg.textContent = "Foto 1 presa. Vai tranquillo, poi fai la foto finale.";
+    } else {
+      elMsg.textContent = "Compito finito! Il mondo cresce.";
+    }
+  }
 
-updateCounters();
-setStatus("Nuovo compito: fai 2 foto (inizio + fine).");
-setSceneMood("idle");
-ensureCharacterVisible();
+  // --- Logica foto: 2 foto = completato ---
+  function onTakePhoto() {
+    state.photosInTask += 1;
+
+    // energia: +2 per ogni foto (come prima)
+    state.energy += 2;
+
+    if (state.photosInTask >= 2) {
+      // COMPLETATO: cresce
+      state.world += 1;
+      state.photosInTask = 0;
+
+      // animazione crescita
+      flashScene();
+      // piccola attesa e poi cambia scena (fade)
+      setTimeout(() => {
+        applyStage(state.world % 4);
+      }, 180);
+
+      elMsg.textContent = "Bravo. Hai finito. Il mondo è cambiato.";
+    }
+
+    saveState();
+    render();
+  }
+
+  // --- Camera input (MVP: basta “selezionare” la foto) ---
+  inputCam.addEventListener("change", () => {
+    if (inputCam.files && inputCam.files.length) onTakePhoto();
+    inputCam.value = "";
+  });
+
+  btnSnap.addEventListener("click", () => inputCam.click());
+
+  btnReset.addEventListener("click", () => {
+    state.photosInTask = 0;
+    saveState();
+    render();
+  });
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(SKEY);
+      if (!raw) return { energy: 0, world: 0, photosInTask: 0 };
+      const x = JSON.parse(raw);
+      return {
+        energy: Number(x.energy || 0),
+        world: Number(x.world || 0),
+        photosInTask: Number(x.photosInTask || 0),
+      };
+    } catch {
+      return { energy: 0, world: 0, photosInTask: 0 };
+    }
+  }
+  function saveState() {
+    localStorage.setItem(SKEY, JSON.stringify(state));
+  }
+
+  render();
+})();
