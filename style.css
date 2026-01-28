@@ -1,6 +1,6 @@
 /* ------------------------------
-   WORLDGROW — STYLE v1
-   tono: teneramente fantastico
+   WORLDGROW — STYLE v2 (LIVE SCENE)
+   - overlay: porta + lucciole + personaggio animato
 -------------------------------- */
 
 :root{
@@ -15,199 +15,136 @@
 }
 
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  padding:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Helvetica, Arial, sans-serif;
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* ------------------------------
-   APP LAYOUT
--------------------------------- */
+.app{max-width:480px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
 
-.app{
-  max-width:480px;
-  margin:0 auto;
-  padding:16px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
+/* HEADER */
+.top{display:flex;justify-content:space-between;align-items:center;background:var(--surface);
+  border-radius:16px;padding:12px 14px;border:1px solid var(--border);
 }
+.title{display:flex;gap:10px;align-items:flex-start;}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--accent);margin-top:6px;}
+h1{margin:0;font-size:1.1rem;}
+.top p{margin:2px 0 0;font-size:.8rem;color:var(--muted);}
+.counters{display:flex;gap:8px;}
+.counter{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-weight:700;font-size:.85rem;}
 
-/* ------------------------------
-   HEADER
--------------------------------- */
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:var(--surface);
-  border-radius:16px;
-  padding:12px 14px;
-  border:1px solid var(--border);
-}
-
-.title{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-}
-
-.dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:var(--accent);
-  margin-top:6px;
-}
-
-h1{
-  margin:0;
-  font-size:1.1rem;
-}
-
-.top p{
-  margin:2px 0 0;
-  font-size:.8rem;
-  color:var(--muted);
-}
-
-.counters{
-  display:flex;
-  gap:8px;
-}
-
-.counter{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:6px 10px;
-  font-weight:600;
-  font-size:.85rem;
-}
-
-/* ------------------------------
-   SCENA
--------------------------------- */
-
-.sceneWrap{
-  background:var(--surface);
-  border-radius:20px;
-  padding:10px;
-  border:1px solid var(--border);
-}
-
+/* SCENA */
+.sceneWrap{background:var(--surface);border-radius:20px;padding:10px;border:1px solid var(--border);}
 .scene{
-  position:relative;
-  width:100%;
-  aspect-ratio:1/1;
-  border-radius:16px;
-  overflow:hidden;
+  position:relative;width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;
   background:rgba(0,0,0,.2);
 }
-
 .sceneImg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   transition:transform 900ms cubic-bezier(.2,.9,.2,1);
 }
 
 /* crescita gentile */
-.scene.grow .sceneImg{
-  transform:scale(1.03);
+.scene.grow .sceneImg{ transform:scale(1.03); }
+
+/* layers */
+.layer{position:absolute;inset:0;pointer-events:none;}
+
+/* DOOR GLOW: simuliamo glow nella zona porta (sinistra) */
+.doorGlow{
+  opacity:0;
+  background:
+    radial-gradient(circle at 18% 52%, rgba(255,220,150,.55), rgba(255,220,150,0) 35%),
+    radial-gradient(circle at 22% 55%, rgba(255,255,255,.22), rgba(255,255,255,0) 40%);
+  filter: blur(0.2px);
+}
+.scene.door .doorGlow{ animation: doorPulse 1000ms ease-out 1; }
+
+@keyframes doorPulse{
+  0%{opacity:0; transform:scale(1);}
+  20%{opacity:1; transform:scale(1.01);}
+  100%{opacity:0; transform:scale(1.02);}
 }
 
-/* flash */
-.flash{
+/* FIREFLIES: puntini luminosi animati */
+.fireflies{
+  opacity:.9;
+  background:
+    radial-gradient(circle at 20% 35%, rgba(255,230,140,.75) 0 2px, transparent 3px),
+    radial-gradient(circle at 78% 30%, rgba(255,230,140,.55) 0 2px, transparent 3px),
+    radial-gradient(circle at 35% 68%, rgba(255,230,140,.45) 0 2px, transparent 3px),
+    radial-gradient(circle at 62% 62%, rgba(255,230,140,.50) 0 2px, transparent 3px),
+    radial-gradient(circle at 88% 60%, rgba(255,230,140,.40) 0 2px, transparent 3px);
+  animation: fireflyDrift 6s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes fireflyDrift{
+  0%,100%{transform:translateY(0) translateX(0); filter:blur(0px);}
+  50%{transform:translateY(-8px) translateX(6px); filter:blur(.2px);}
+}
+
+/* PERSONAGGIO */
+.hidden{display:none !important;}
+.character{
   position:absolute;
-  inset:0;
-  opacity:0;
-  background:radial-gradient(circle at 50% 55%,
-    rgba(255,255,255,.25),
-    rgba(255,255,255,0) 55%);
+  width:110px;
+  left:26%;
+  bottom:18%;
+  pointer-events:none;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,.35));
+}
+.character.fallback{
+  width:auto;
+  font-size:44px;
+  left:30%;
+  bottom:19%;
+  filter:none;
+}
+.scene.idle #char1Img,
+.scene.idle #char1Fallback{
+  animation: breathe 3s ease-in-out infinite;
+}
+.scene.happy #char1Img,
+.scene.happy #char1Fallback{
+  animation: jump .55s ease-in-out infinite alternate;
+}
+
+@keyframes breathe{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-4px) scale(1.02);}
+}
+@keyframes jump{
+  from{transform:translateY(0) rotate(-1deg);}
+  to{transform:translateY(-16px) rotate(1deg);}
+}
+
+/* flash overlay */
+.flash{
+  position:absolute;inset:0;opacity:0;
+  background: radial-gradient(circle at 50% 55%, rgba(255,255,255,.22), rgba(255,255,255,0) 55%);
   pointer-events:none;
 }
-
-.scene.grow .flash{
-  animation:flashPop 900ms ease-out 1;
-}
-
-@keyframes flashPop{
-  0%{opacity:0}
-  25%{opacity:1}
-  100%{opacity:0}
-}
+.scene.grow .flash{ animation: flashPop 900ms ease-out 1; }
+@keyframes flashPop{ 0%{opacity:0} 25%{opacity:1} 100%{opacity:0} }
 
 /* pop text */
 .pop{
-  position:absolute;
-  left:50%;
-  top:10%;
-  transform:translateX(-50%);
-  padding:10px 14px;
-  border-radius:999px;
-  background:rgba(0,0,0,.45);
-  border:1px solid var(--border);
-  font-weight:700;
-  opacity:0;
-  pointer-events:none;
+  position:absolute;left:50%;top:10%;transform:translateX(-50%);
+  padding:10px 14px;border-radius:999px;background:rgba(0,0,0,.45);
+  border:1px solid var(--border);font-weight:800;opacity:0;pointer-events:none;
 }
-
-.scene.pop .pop{
-  animation:popIn 1200ms ease-out 1;
-}
-
+.scene.pop .pop{ animation: popIn 1200ms ease-out 1; }
 @keyframes popIn{
-  0%{
-    opacity:0;
-    transform:translateX(-50%) translateY(6px) scale(.98)
-  }
-  20%{
-    opacity:1;
-    transform:translateX(-50%) translateY(0) scale(1)
-  }
-  100%{
-    opacity:0;
-    transform:translateX(-50%) translateY(-6px) scale(1)
-  }
+  0%{opacity:0;transform:translateX(-50%) translateY(6px) scale(.98)}
+  20%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-6px) scale(1)}
 }
 
-/* ------------------------------
-   CONTROLLI
--------------------------------- */
-
-.controls{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
+/* CONTROLLI */
+.controls{display:flex;flex-direction:column;gap:10px;}
 .btn{
-  padding:14px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--text);
-  font-size:1rem;
-  font-weight:700;
+  padding:14px;border-radius:14px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);font-size:1rem;font-weight:800;
 }
-
-.btn.primary{
-  background:linear-gradient(180deg,var(--accent),var(--accent2));
-  color:#053a2d;
-}
-
-.hint{
-  margin:4px 0 0;
-  font-size:.8rem;
-  color:var(--muted);
-  text-align:center;
-}
+.btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#053a2d;}
+.hint{margin:4px 0 0;font-size:.8rem;color:var(--muted);text-align:center;}
