@@ -3,34 +3,78 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Worldgrow</title>
+  <title>Worldgrow — Il tuo Mondo</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="wrap">
     <section class="card">
-      <div class="header">
+      <header class="header">
         <div class="dot"></div>
         <div class="title">
           <h1>Il tuo Mondo</h1>
-          <p id="msg">Nuovo compito: fai 2 foto (inizio + fine).</p>
+          <p id="msg">Apri l’app: gli abitanti aspettano. Poi fai 2 foto (inizio + fine).</p>
         </div>
         <div class="stats">
-          <div class="badge" title="energia"><span id="energy">0</span></div>
-          <div class="badge" title="mondo"><span id="world">0</span></div>
+          <div class="badge" title="energia">⚡ <span id="energy">0</span></div>
+          <div class="badge" title="mondo">🌍 <span id="world">0</span></div>
+        </div>
+      </header>
+
+      <!-- SCENA (palcoscenico) -->
+      <div class="stageWrap">
+        <div class="stage" id="stage" aria-label="Scena del mondo">
+          <!-- sfondo -->
+          <div class="bg"></div>
+
+          <!-- lucine -->
+          <div class="fireflies" aria-hidden="true"></div>
+
+          <!-- porta + portale -->
+          <div class="doorZone" aria-hidden="true">
+            <div class="door" id="door"></div>
+            <div class="portal" id="portal"></div>
+          </div>
+
+          <!-- personaggi -->
+          <div class="char char-gremlin" id="gremlin" aria-hidden="true">
+            <div class="body"></div>
+            <div class="eyes">
+              <span class="eye"></span>
+              <span class="eye"></span>
+            </div>
+            <div class="mouth"></div>
+            <div class="shadow"></div>
+          </div>
+
+          <div class="char char-bunny" id="bunny" aria-hidden="true">
+            <div class="bbody"></div>
+            <div class="ears">
+              <span class="ear e1"></span>
+              <span class="ear e2"></span>
+            </div>
+            <div class="beyes">
+              <span class="beye"></span>
+              <span class="beye"></span>
+            </div>
+            <div class="bshadow"></div>
+          </div>
+
+          <!-- testo pop -->
+          <div class="pop" id="pop" aria-live="polite"></div>
+          <div class="flash" id="flash" aria-hidden="true"></div>
         </div>
       </div>
 
-      <div class="sceneBox">
-        <div class="scene" id="scene"></div>
-      </div>
-
+      <!-- controlli -->
       <div class="controls">
         <button class="btn primary" id="btnSnap">📸 Foto compito</button>
         <button class="btn" id="btnResetTask">Nuovo compito</button>
-        <div class="hint">Regola MVP: <b>2 foto = compito finito</b> → il mondo cresce.</div>
+        <button class="btn ghost" id="btnDemo">▶ Demo evento</button>
+        <div class="hint">Regola MVP: <b>2 foto = compito finito</b> → loro reagiscono e succede un evento.</div>
       </div>
 
+      <!-- camera input -->
       <input id="camera" type="file" accept="image/*" capture="environment" style="display:none" />
     </section>
   </main>
