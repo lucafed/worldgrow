@@ -3,72 +3,93 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Worldgrow</title>
+  <title>Worldgrow — Il tuo Mondo</title>
   <link rel="stylesheet" href="./style.css" />
+  <meta name="theme-color" content="#0f2321">
 </head>
+
 <body>
-
-<main class="wrap">
-  <section class="card">
-
-    <header class="header">
-      <div class="dot"></div>
+  <main class="wrap">
+    <header class="top">
       <div class="title">
-        <h1>Il tuo Mondo</h1>
-        <p id="msg">Gli abitanti sono in attesa.</p>
+        <div class="dot"></div>
+        <div>
+          <div class="h1">Il tuo Mondo</div>
+          <div class="sub" id="hint">Nuovo compito: fai 2 foto (inizio + fine).</div>
+        </div>
       </div>
-      <div class="stats">
-        <div class="badge">⚡ <span id="energy">0</span></div>
-        <div class="badge">🌍 <span id="world">0</span></div>
+
+      <div class="counters">
+        <div class="pill" title="Energia">
+          <span class="ico">⚡</span>
+          <span id="energy">0</span>
+        </div>
+        <div class="pill" title="Crescita mondo">
+          <span class="ico">🌍</span>
+          <span id="growth">0</span>
+        </div>
       </div>
     </header>
 
-    <!-- SCENA -->
-    <div class="stageWrap">
-      <div class="stage idle" id="stage">
-
+    <section class="card">
+      <div class="stage" id="stage">
+        <!-- Sfondo (gradiente, niente immagini per ora: già “cartone”) -->
         <div class="bg"></div>
-        <div class="fog"></div>
+        <div class="fireflies" aria-hidden="true"></div>
 
-        <!-- PORTA -->
-        <div class="door"></div>
-        <div class="portal"></div>
+        <!-- PORTA misteriosa -->
+        <div class="door" id="door" aria-hidden="true">
+          <div class="doorGlow"></div>
+          <div class="doorWood"></div>
+          <div class="doorKnob"></div>
+        </div>
 
-        <!-- PERSONAGGIO 1 — IL GUARDIANO STRAMBO -->
-        <div class="char guardian">
-          <div class="g-body"></div>
-          <div class="g-eye left"></div>
-          <div class="g-eye right"></div>
-          <div class="g-mouth"></div>
+        <!-- PORTALE (appare in evento) -->
+        <div class="portal" id="portal" aria-hidden="true"></div>
+
+        <!-- “COSA CHE CRESCE” (albero/oggetto) -->
+        <div class="growthThing" id="growthThing" aria-hidden="true"></div>
+
+        <!-- PERSONAGGI: SEMPRE VISIBILI + ANIMATI -->
+        <div class="char geo" id="geo" aria-hidden="true">
           <div class="shadow"></div>
+          <div class="body"></div>
+          <div class="moss"></div>
+          <div class="eyes">
+            <span class="eye"></span><span class="eye"></span>
+          </div>
+          <div class="mouth"></div>
         </div>
 
-        <!-- PERSONAGGIO 2 — L’ESSERE NERVOSO -->
-        <div class="char watcher">
-          <div class="w-core"></div>
-          <div class="w-ring"></div>
-          <div class="shadow small"></div>
+        <div class="char scriba" id="scriba" aria-hidden="true">
+          <div class="shadow"></div>
+          <div class="body"></div>
+          <div class="head"></div>
+          <div class="mono"></div>
+          <div class="eye"></div>
+          <div class="beak"></div>
+          <div class="wing w1"></div>
+          <div class="wing w2"></div>
         </div>
 
-        <div class="flash"></div>
-        <div class="pop" id="pop"></div>
-
+        <!-- overlay flash + testo -->
+        <div class="flash" id="flash" aria-hidden="true"></div>
+        <div class="pop" id="pop" aria-hidden="true"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- CONTROLLI -->
-    <div class="controls">
+    <section class="controls">
       <button class="btn primary" id="btnSnap">📸 Foto compito</button>
-      <button class="btn" id="btnReset">Nuovo compito</button>
+      <button class="btn" id="btnResetTask">Nuovo compito</button>
       <button class="btn ghost" id="btnDemo">▶ Demo</button>
-      <p class="hint">2 foto = qualcosa cambia.</p>
-    </div>
 
-    <input id="camera" type="file" accept="image/*" capture="environment" hidden />
+      <div class="foot">Regola MVP: <b>2 foto = qualcosa cambia</b>.</div>
 
-  </section>
-</main>
+      <!-- input camera -->
+      <input id="camera" type="file" accept="image/*" capture="environment" hidden />
+    </section>
+  </main>
 
-<script src="./app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
